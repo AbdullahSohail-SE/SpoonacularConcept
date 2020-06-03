@@ -16,7 +16,7 @@ body{
     transition:all .2s;
 }
 .card-medium{
-    width:12rem;
+    width:15rem;
 }
 .custom-heading {
     font-size: 1.8rem;
@@ -29,4 +29,40 @@ body{
     text-align: center;
     transform: skewY(-2deg);
     background-color: rgb(32,201,151);
+}
+.custom-card-title {
+    font-size: 1.2rem;
+    display: inline-block;
+    padding:2px 20px 2px 20px;
+    color: white;
+    margin:0 auto;
+    text-align: center;
+    transform: translateY(-30px);
+    background-color: rgb(32,201,151);
+}
+.summary-text{
+    font-size:.8rem;
+    color:teal;
+    text-align:center;
+}
+.recipie-card-info{
+    display:flex;
+    justify-content:center;
+}
+.showcase-text {
+    font-size: .8rem;
+    display: inline-block;
+    padding: 2px 10px 2px 10px;
+    color: white;
+    margin: 0 auto;
+    text-align: center;
+    background-color: rgb(32,201,151);
+    transform: skewY(-2deg);
+}
+.showcase-info{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-left:2px;
+    margin-right:2px;
 }

@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace SpoonacularConcept.Controllers
 {
-    public class HomeController : Controller
+    public class FoodController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Popular()
         {
             return View();
         }
