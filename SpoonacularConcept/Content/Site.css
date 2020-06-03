@@ -15,3 +15,18 @@ body{
 .nav-item span{
     transition:all .2s;
 }
+.card-medium{
+    width:12rem;
+}
+.custom-heading {
+    font-size: 1.8rem;
+    display:inline-block;
+    padding:2px 20px 2px 20px;
+    font-weight: 600;
+    color:white;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    transform: skewY(-2deg);
+    background-color: rgb(32,201,151);
+}
