@@ -7,34 +7,105 @@
 
     <div class="content d-flex ">
         <div class="d-inline-block  mx-auto">
-            <div class="row">
-                <div class="card card-medium m-2">
-                    <img src="~/Content/Images/user1-128x128.jpg" alt="Alternate Text" class="card-img" />
+            <div id="cardSpace" class="row justify-content-center">
+
+
+            </div>
+            <div id="infiniteDiv" class="d-flex align-items-center justify-content-center" style="height:150px">
+                <div id="infiniteSpinner" class="lds-ellipsis">
+                    <div></div><div></div><div></div>
+                </div>
+            </div>
+        
+    </div>
+@section scripts
+{
+    <script>
+
+        function loadContent() {
+            $.ajax({
+                type: "GET",
+                url: "https://api.spoonacular.com/recipes/random",
+                dataType: "json",
+                data: {
+                    'number': 10,
+                    'apiKey': 'e7b2053b89fc46d1a55f57ec23b4a9c6'
+                },
+                success: function (data) {
+                    
+                    data.recipes.forEach((recipe) => {
+                        $(renderCardMarkup(recipe)).appendTo($('#cardSpace'));
+                    });
+                    $("#infiniteSpinner").css("display", "none");
+                }
+            });
+        }
+
+        function renderCardMarkup({ title, servings, readyInMinutes, pricePerServing, spoonacularScore, image }) {
+            return `<div class="card card-medium m-2">
+                    <div class="card-img-overlay p-2 d-flex justify-content-end">
+                        <div class="d-flex flex-column">
+                            <button id="markFavourite" class="btn custom-card-btn">
+                                <i  class="fas my-1  fa-heart text-white"></i>
+                            </button >
+                            <button id="addToCart" class="btn custom-card-btn">
+                                <i  class="fas my-1  fa-cart-plus text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="custom-card-img">
+                        <img src='${image}' alt="Alternate Text" class="card-img"  />
+                    </div>
                     <div class="m-2 d-flex" style="flex-direction:column">
-                        <h3 class="card-title custom-card-title">Spaghetti</h3>
+                        <h3 class="card-title custom-card-title">${title}</h3>
                         <p class="card-text summary-text">lorem ipsum summary dotem poasdmaklsndand aosdnjasn</p>
                         <div class="recipie-card-info">
                             <div class="showcase-info">
                                 <span href="#" class="showcase-text">Servings</span>
-                                <span class="text-secondary">2</span>
+                                <span class="text-secondary">${servings}</span>
                             </div>
                             <div class="showcase-info" >
                                 <span href="#" class="showcase-text">Score</span>
-                                <span class="text-secondary">98</span>
+                                <span class="text-secondary">${spoonacularScore}</span>
                             </div>
                             <div class="showcase-info" >
                                 <span href="#" class="showcase-text">Price</span>
-                                <span class="text-secondary">20.3</span>
+                                <span class="text-secondary">${pricePerServing}</span>
                             </div>
                             <div class="showcase-info" >
                                 <span href="#" class="showcase-text">Time</span>
-                                <span class="text-secondary">2min</span>
+                                <span class="text-secondary">${readyInMinutes}min</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-            </div>
-        </div>
-        
-    </div>
+                </div>`
+        }
+        $(function () {
+
+           
+            $("#cardSpace").on('click',"#markFavourite i,#addToCart i", (e) => {
+                console.log(e.target);
+            });
+
+            //Spinner
+            var spinner = $("#infiniteSpinner");
+            //
+            //inifinite Scroll
+            const options = {
+                threshold:0.9
+            };
+            var observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        spinner.css("display", "block");
+                        loadContent();
+                        
+                    }
+                })
+            }, options);
+            
+            observer.observe($("#infiniteDiv")[0]);
+            //
+        })
+    </script>
+}

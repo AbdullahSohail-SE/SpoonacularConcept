@@ -2,6 +2,10 @@
 body{
     box-sizing:border-box;
 }
+.custom-card-img {
+    background: rgb(2,0,36);
+    background: linear-gradient(30deg, rgba(2,0,36,1) 0%, rgba(29,204,152,0.45049894957983194) 0%, rgba(32,201,151,1) 100%);
+}
 .nav-item:hover{
     cursor:pointer;
     background-color:whitesmoke;
@@ -12,6 +16,19 @@ body{
 .nav-item:hover span{
     color:darkseagreen;
 }
+.custom-card-btn {
+    padding:0;
+    transition:all .2s;
+    margin-bottom :10px;
+}
+.custom-card-btn:hover{
+    transform:scale(1.15);
+}
+    .custom-card-btn:active {
+        transform: scale(1.1);
+    }
+
+ 
 .nav-item span{
     transition:all .2s;
 }
@@ -66,3 +83,72 @@ body{
     margin-left:2px;
     margin-right:2px;
 }
+
+/*spinner css*/
+.lds-ellipsis {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+    .lds-ellipsis div {
+        position: absolute;
+        top: 33px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: rgba(32,201,151,1);
+        animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    }
+
+        .lds-ellipsis div:nth-child(1) {
+            left: 8px;
+            animation: lds-ellipsis1 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(2) {
+            left: 8px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(3) {
+            left: 32px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(4) {
+            left: 56px;
+            animation: lds-ellipsis3 0.6s infinite;
+        }
+
+@keyframes lds-ellipsis1 {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes lds-ellipsis3 {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}
+
+@keyframes lds-ellipsis2 {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(24px, 0);
+    }
+}
+/*-Spinner Css*/
