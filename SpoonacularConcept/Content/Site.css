@@ -152,3 +152,33 @@ body{
     }
 }
 /*-Spinner Css*/
+
+/*Login card*/
+
+.logincard{
+   
+    width:18rem;
+    padding:2rem;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    position:absolute;
+    left:50%;
+    top:50%;
+    color:white;
+    transform:translate(-50%,-50%);
+    background-color:rgba(32,201,151,1);
+    border-radius:2px;
+    height:524px;
+}
+.login-overlay {
+    background-image: linear-gradient(30deg, rgba(2,0,36,1) 0%, rgba(29,204,152,0.45049894957983194) 0%, rgba(32,201,151,1) 100%),url("Images/login.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.field-validation-error{
+    color:red;
+    font-size:12px;
+}
+.field-validation-error :before{
+    content:"*";
+}
