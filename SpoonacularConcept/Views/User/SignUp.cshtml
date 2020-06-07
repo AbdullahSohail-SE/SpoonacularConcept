@@ -1,0 +1,51 @@
+﻿@model SpoonacularConcept.Models.User
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Sign Up</title>
+    <link href="@Url.Content("~/Content/AdminLTE/adminlte.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <div style="height:100vh" class="login-overlay">
+
+    </div>
+    <div class="logincard signupcard d-flex flex-column justify-content-center">
+
+        <h3 class="text-center font-weight-light ">Sign Up</h3>
+        @using (@Html.BeginForm(actionName: "RegisterUser", controllerName: "User"))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name, new { @class = "font-weight-normal" })
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Name)
+            </div>
+            
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { @class = "font-weight-normal" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Email)
+     
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password, new { @class = "font-weight-normal" })
+                @Html.TextBoxFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Password)
+               
+            </div>
+            <button class="btn btn-dark btn-sm my-1 px-3" style="margin-left:50%;transform:translateX(-50%)">Sign Up</button>
+        }
+        <p class="text-center mt-1 lead text-xs">Or</p>
+        @Html.ActionLink("Log In", "Login", "User", null, new { @class = "btn btn-dark btn-sm mb-1 px-3", @style = "margin-left:50%;transform:translateX(-50%)" })
+
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+</body>
+</html>

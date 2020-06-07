@@ -4,24 +4,20 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 
-namespace SpoonacularConcept.Models
+namespace SpoonacularConcept.Models.ViewModels
 {
-    public class User
+    public class LoginVIewModel
     {
-        public string UserId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [MinLength(8)]
         public string Password { get; set; }
-    }
-    public enum AuthStatus
-    {
-        UserNotFound=1,
-        WrongPassword=2,
-        Authenticated=3
+        public int UserId { get; set; }
+
+
+        public AuthStatus authStatus;
     }
 }

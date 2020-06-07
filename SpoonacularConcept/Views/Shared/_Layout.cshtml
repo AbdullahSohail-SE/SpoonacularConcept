@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model SpoonacularConcept.Models.ViewModels.LoginVIewModel
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -13,7 +15,7 @@
 </head>
 <body class="hold-transition ">
     <div class="wrapper">
-        @Html.Partial("_NavBar")
+        @Html.Partial("_NavBar",Model)
         @Html.Partial("_SideBar")
         <div class="content-wrapper bg-white">
             @RenderBody()

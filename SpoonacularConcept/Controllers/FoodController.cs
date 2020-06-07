@@ -7,11 +7,15 @@ using System.Web.Mvc;
 
 namespace SpoonacularConcept.Controllers
 {
-    public class FoodController : Controller
+    public class FoodController : BaseController
     {
         public ActionResult Popular()
         {
-           
+            CheckCookie();
+            if(TempData["userLogInStatus"]!= null)
+            {
+                return View(TempData["userLogInStatus"]);
+            }
             return View();
         }
 

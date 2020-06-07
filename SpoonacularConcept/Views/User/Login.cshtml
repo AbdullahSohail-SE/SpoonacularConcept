@@ -1,4 +1,4 @@
-﻿@model SpoonacularConcept.Models.User
+﻿@model SpoonacularConcept.Models.ViewModels.LoginVIewModel
 @{
     Layout = null;
 }
@@ -19,20 +19,31 @@
         <div class="logincard d-flex flex-column justify-content-center">
             
                 <h3 class="text-center font-weight-light my-3">Login</h3>
-                @using (@Html.BeginForm(actionName:"Login",controllerName:"User"))
+                @using (@Html.BeginForm(actionName:"AuthenticateUser",controllerName:"User"))
                 {
                     <div class="form-group">
                         @Html.LabelFor(m => m.Email, new { @class = "font-weight-normal" })
                         @Html.TextBoxFor(m=>m.Email,new { @class="form-control" })
                         @Html.ValidationMessageFor(m=>m.Email)
+                        @if (Model.authStatus==SpoonacularConcept.Models.AuthStatus.UserNotFound)
+                        {
+                            <span class="field-validation-error"> *User not found! Did you sign up?</span>
+                        }
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.Password,new {@class="font-weight-normal" })
                         @Html.TextBoxFor(m=>m.Password,new { @class="form-control" })
                         @Html.ValidationMessageFor(m=>m.Password)
+                        @if (Model.authStatus==SpoonacularConcept.Models.AuthStatus.WrongPassword)
+                        {
+                            <span class="field-validation-error">*Wrong Password!</span>
+                        }
                     </div>
-                    <button class="btn btn-outline-dark btn-sm my-2 px-3" style="margin-left:50%;transform:translateX(-50%)">Login</button>
+                    <button class="btn btn-dark btn-sm my-2 px-3" style="margin-left:50%;transform:translateX(-50%)">Login</button>
                 }    
+                        <p class="text-center mt-1 lead text-xs">Or</p>
+                          @Html.ActionLink("SignUp", "SignUp", "User", null, new {@class="btn btn-dark btn-sm mb-1 px-3" ,@style="margin-left:50%;transform:translateX(-50%)" })
+                        
         </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
