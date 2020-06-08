@@ -10,19 +10,27 @@ namespace SpoonacularConcept.Controllers
 {
     public class BaseController : Controller
     {
-        public void CheckCookie()
+        public bool CookieExists()
         {
             
+            
             var cookie = HttpContext.Request.Cookies["currentUser"];
-            if (cookie != null)
+            if (cookie != null )
             {
-                TempData["userLogInStatus"] = JsonConvert.DeserializeObject<LoginVIewModel>(cookie.Value);
+                if (String.IsNullOrEmpty(cookie.Value))
+                    return false;
+                
+                    TempData["userLogInStatus"] = JsonConvert.DeserializeObject<LoginVIewModel>(cookie.Value);
+                     return true;
             }
-
-            RedirectToAction("Login", "User");
+            else
+                return false;
+           
         }
 
         
-               
+
+
+
     }
 }

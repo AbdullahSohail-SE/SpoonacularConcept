@@ -5,6 +5,7 @@ using System.Web;
 using System.Data.SqlClient;
 using SpoonacularConcept.Models;
 using System.Configuration;
+using SpoonacularConcept.Models.ViewModels;
 
 namespace SpoonacularConcept.Models
 {
@@ -59,5 +60,33 @@ namespace SpoonacularConcept.Models
                 return userId;
             }
         }
+        public int MarkFavourite(dynamic Info)
+        {
+            using (var cmd=new SqlCommand("markFavourite", _sqlConn))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                var recipe = new AddToLikeCart();
+          
+                cmd.Parameters.Add("@RecipeId", System.Data.SqlDbType.SmallInt).Value = Info.recipe.RecipeId;
+                cmd.Parameters.Add("@UserId", System.Data.SqlDbType.TinyInt).Value = Info.userId;
+                cmd.Parameters.Add("@Image", System.Data.SqlDbType.VarChar).Value = Info.Image;
+                cmd.Parameters.Add("@Summary", System.Data.SqlDbType.VarChar).Value = Info.Summary;
+                cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = Info.Title;
+                cmd.Parameters.Add("@Servings", System.Data.SqlDbType.SmallInt).Value = Info.Servings;
+                cmd.Parameters.Add("@Price", System.Data.SqlDbType.SmallInt).Value = Info.Price;
+                cmd.Parameters.Add("@Score", System.Data.SqlDbType.TinyInt).Value = Info.Score;
+                cmd.Parameters.Add("@Time", System.Data.SqlDbType.Time).Value = Info.Time;
+
+                cmd.Parameters.Add("@cartId", System.Data.SqlDbType.SmallInt).Direction= System.Data.ParameterDirection.Output;
+                _sqlConn.Open();
+                cmd.ExecuteNonQuery();
+                var cartId = Convert.ToInt32(cmd.Parameters["@cartId"].Value);
+                _sqlConn.Close();
+
+                return cartId;
+
+            }
+        }
+        
     }
 }

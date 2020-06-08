@@ -24,6 +24,7 @@ namespace SpoonacularConcept.Controllers
         {
             HttpContext.Response.Cookies["currentUser"].Expires = new DateTime(1, 1, 1);
                 TempData["userLogInStatus"] = null;
+            Session.Abandon();
             return RedirectToAction("Login");
         }
         public ActionResult SignUp()

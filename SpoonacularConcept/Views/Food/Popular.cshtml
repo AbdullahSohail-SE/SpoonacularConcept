@@ -41,12 +41,12 @@
             });
         }
 
-        function renderCardMarkup({ title, servings, readyInMinutes, pricePerServing, spoonacularScore, image }) {
+        function renderCardMarkup({ title, servings, readyInMinutes, pricePerServing, spoonacularScore, image,id }) {
             return `<div class="card card-medium m-2">
                     <div class="card-img-overlay p-2 d-flex justify-content-end">
                         <div class="d-flex flex-column">
                             <button id="markFavourite" class="btn custom-card-btn">
-                                <i  class="fas my-1  fa-heart text-white"></i>
+                                <i  data-recipeId=${id} class="fas my-1  fa-heart text-white"></i>
                             </button >
                             <button id="addToCart" class="btn custom-card-btn">
                                 <i  class="fas my-1  fa-cart-plus text-white"></i>
@@ -54,27 +54,28 @@
                         </div>
                     </div>
                     <div class="custom-card-img">
-                        <img src='${image}' alt="Alternate Text" class="card-img"  />
+                        <img id="recipe-src" src='${image}' alt="Alternate Text" class="card-img"  />
                     </div>
                     <div class="m-2 d-flex" style="flex-direction:column">
-                        <h3 class="card-title custom-card-title">${title}</h3>
+                        <h3 id="recipe-title" class="card-title custom-card-title">${title}</h3>
                         <p class="card-text summary-text">lorem ipsum summary dotem poasdmaklsndand aosdnjasn</p>
                         <div class="recipie-card-info">
                             <div class="showcase-info">
                                 <span href="#" class="showcase-text">Servings</span>
-                                <span class="text-secondary">${servings}</span>
+                                <span id="recipe-servings" class="text-secondary">${servings}</span>
                             </div>
                             <div class="showcase-info" >
                                 <span href="#" class="showcase-text">Score</span>
-                                <span class="text-secondary">${spoonacularScore}</span>
+                                <span id="recipe-score" class="text-secondary">${spoonacularScore}</span>
                             </div>
                             <div class="showcase-info" >
                                 <span href="#" class="showcase-text">Price</span>
-                                <span class="text-secondary">${pricePerServing}</span>
+                                <span id="recipe-price" class="text-secondary">${pricePerServing}</span>
                             </div>
                             <div class="showcase-info" >
                                 <span href="#" class="showcase-text">Time</span>
-                                <span class="text-secondary">${readyInMinutes}min</span>
+                                <span id="recipe-time" class="text-secondary">${readyInMinutes}</span>
+                                <span>min</span>    
                             </div>
                         </div>
                     </div>
@@ -83,8 +84,38 @@
         $(function () {
 
            
-            $("#cardSpace").on('click',"#markFavourite i,#addToCart i", (e) => {
-                console.log(e.target);
+            $("#cardSpace").on('click', "#markFavourite i,#addToCart i", (e) => {
+
+                var actionType = $(e.target).parent().attr('id');
+
+                if (actionType == "markFavourite") {
+                    var cardSpace = $(e.target).closest(".card");
+                    
+
+                    $.ajax({
+                        type: "post",
+                        url: "http://localhost:53727/food/addToCart",
+                        dataType: 'json',
+                        headers: {  'Access-Control-Allow-Origin': '*' },
+                        crossDomain: true,
+                        data: {
+                            'Recipe': {
+                                Image: cardSpace.find("#recipe-src").attr('src'),
+                                Summary: 'lorem ipsum summary dotem poasdmaklsndand aosdnjasn',
+                                Title: cardSpace.find("#recipe-title").text(),
+                                Servings: cardSpace.find("#recipe-servings").text(),
+                                Score: cardSpace.find("#recipe-score").text(),
+                                Price: cardSpace.find("#recipe-price").text(),
+                                Time: cardSpace.find("#recipe-time").text(),
+                                recipeId: $(e.target).attr("data-recipeId")
+                            }
+                        },
+                        success: function () {
+                            console.log("Sented :)");
+                        }
+                        
+                    })
+                }
             });
 
             //Spinner
@@ -106,6 +137,9 @@
             
             observer.observe($("#infiniteDiv")[0]);
             //
+
+            
+            
         })
     </script>
 }
