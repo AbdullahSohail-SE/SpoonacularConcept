@@ -62,30 +62,61 @@ namespace SpoonacularConcept.Models
         }
         public int MarkFavourite(dynamic Info)
         {
-            using (var cmd=new SqlCommand("markFavourite", _sqlConn))
+            using (var cmd=new SqlCommand("AddToCart", _sqlConn))
             {
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                var recipe = new AddToLikeCart();
+               
           
-                cmd.Parameters.Add("@RecipeId", System.Data.SqlDbType.SmallInt).Value = Info.recipe.RecipeId;
+                cmd.Parameters.Add("@RecipeId", System.Data.SqlDbType.Int).Value = Info.recipe.recipeId;
                 cmd.Parameters.Add("@UserId", System.Data.SqlDbType.TinyInt).Value = Info.userId;
-                cmd.Parameters.Add("@Image", System.Data.SqlDbType.VarChar).Value = Info.Image;
-                cmd.Parameters.Add("@Summary", System.Data.SqlDbType.VarChar).Value = Info.Summary;
-                cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = Info.Title;
-                cmd.Parameters.Add("@Servings", System.Data.SqlDbType.SmallInt).Value = Info.Servings;
-                cmd.Parameters.Add("@Price", System.Data.SqlDbType.SmallInt).Value = Info.Price;
-                cmd.Parameters.Add("@Score", System.Data.SqlDbType.TinyInt).Value = Info.Score;
-                cmd.Parameters.Add("@Time", System.Data.SqlDbType.Time).Value = Info.Time;
+                cmd.Parameters.Add("@Image", System.Data.SqlDbType.NVarChar).Value = Info.recipe.Image;
+                cmd.Parameters.Add("@Summary", System.Data.SqlDbType.VarChar).Value = Info.recipe.Summary;
+                cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = Info.recipe.Title;
+                cmd.Parameters.Add("@Servings", System.Data.SqlDbType.SmallInt).Value = Info.recipe.Servings;
+                cmd.Parameters.Add("@Price", System.Data.SqlDbType.SmallInt).Value = Info.recipe.Price;
+                cmd.Parameters.Add("@Score", System.Data.SqlDbType.TinyInt).Value = Info.recipe.Score;
+                cmd.Parameters.Add("@Time", System.Data.SqlDbType.VarChar).Value = Info.recipe.Time;
 
                 cmd.Parameters.Add("@cartId", System.Data.SqlDbType.SmallInt).Direction= System.Data.ParameterDirection.Output;
                 _sqlConn.Open();
                 cmd.ExecuteNonQuery();
+                if (cmd.Parameters["@cartId"].Value == DBNull.Value)
+                    return -1;
                 var cartId = Convert.ToInt32(cmd.Parameters["@cartId"].Value);
                 _sqlConn.Close();
 
                 return cartId;
 
             }
+        }
+        public void UnmarkFavourite(int recipeId,int userId)
+        {
+            using (var cmd = new SqlCommand("RemoveFromCart", _sqlConn))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.Add("@RecipeId", System.Data.SqlDbType.Int).Value = recipeId;
+                cmd.Parameters.Add("@UserId", System.Data.SqlDbType.TinyInt).Value = userId;
+
+                _sqlConn.Open();
+                cmd.ExecuteNonQuery();
+                _sqlConn.Close();
+            }
+        }
+        public int GetLikeCount(int userId)
+        {
+            using (var cmd = new SqlCommand("GetLikeCount", _sqlConn))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", System.Data.SqlDbType.TinyInt).Value = userId;
+                cmd.Parameters.Add("@likeCount", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.Output;
+
+                _sqlConn.Open();
+                cmd.ExecuteNonQuery();
+                var likesCount = Convert.ToInt32(cmd.Parameters["@likeCount"].Value);
+                _sqlConn.Close();
+                return likesCount;
+            }
+
         }
         
     }

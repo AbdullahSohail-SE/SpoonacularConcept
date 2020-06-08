@@ -20,7 +20,7 @@ namespace SpoonacularConcept.Controllers
                 if (String.IsNullOrEmpty(cookie.Value))
                     return false;
                 
-                    TempData["userLogInStatus"] = JsonConvert.DeserializeObject<LoginVIewModel>(cookie.Value);
+                    Session["userLogInStatus"] = JsonConvert.DeserializeObject<LoginVIewModel>(cookie.Value);
                      return true;
             }
             else

@@ -16,9 +16,9 @@ namespace SpoonacularConcept.Controllers
             if (!CookieExists())
                 return RedirectToAction("Login", "User");
 
-            if(TempData["userLogInStatus"]!= null)
+            if(Session["userLogInStatus"]!= null)
             {
-                return View(TempData["userLogInStatus"]);
+                return View(Session["userLogInStatus"]);
             }
             return View();
         }
@@ -29,19 +29,41 @@ namespace SpoonacularConcept.Controllers
         }
       */
        [HttpPost]
-        public void AddToCart(AddToLikeCart recipe)
+        public ActionResult AddToCart(AddToLikeCart recipe)
         {
 
-            var time =(int) new TimeSpan(0, Convert.ToInt32(recipe.Time), 0).TotalMinutes;
-            recipe.Time = time.ToString();
+     
 
-            var userInfo = TempData["userLogInStatus"] as LoginVIewModel;
+            var userInfo = Session["userLogInStatus"] as LoginVIewModel;
             var userId = userInfo.UserId;
 
             var manager = new DBManager("SpoonacularDB");
             var cartId=manager.MarkFavourite(new { userId, recipe });
 
-            
+            return Content(cartId.ToString());
+        }
+        [HttpDelete]
+        [Route("food/remove/{recipeId}")]
+        public ActionResult RemoveFromCart(int recipeId)
+        {
+            var manager = new DBManager("SpoonacularDB");
+
+            var userInfo = Session["userLogInStatus"] as LoginVIewModel;
+            var userId = userInfo.UserId;
+
+            manager.UnmarkFavourite(recipeId, userId);
+
+            return Content("Deleted");
+
+        }
+        public ActionResult GetLikeCount()
+        {
+            var manager = new DBManager("SpoonacularDB");
+            var userInfo = Session["userLogInStatus"] as LoginVIewModel;
+            var userId = userInfo.UserId;
+
+            var likesCount=manager.GetLikeCount(userId);
+            return Content(likesCount.ToString());
         }
 
         public ActionResult About()

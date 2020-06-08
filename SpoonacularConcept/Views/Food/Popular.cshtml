@@ -22,6 +22,21 @@
 {
     <script>
 
+         function getTotalLikes() {
+            $.ajax({
+                type: "get",
+                url: "http://localhost:53727/food/GetLikeCount",
+                dataType: 'json',
+                headers: {  'Access-Control-Allow-Origin': '*' },
+                crossDomain: true,
+                success: function (data) {
+                    
+                    $("#likedCount").text(data); 
+                }
+            });
+        }
+      
+
         function loadContent() {
             $.ajax({
                 type: "GET",
@@ -83,10 +98,15 @@
         }
         $(function () {
 
+            getTotalLikes();
+
+            
+
            
             $("#cardSpace").on('click', "#markFavourite i,#addToCart i", (e) => {
 
                 var actionType = $(e.target).parent().attr('id');
+                
 
                 if (actionType == "markFavourite") {
                     var cardSpace = $(e.target).closest(".card");
@@ -110,8 +130,28 @@
                                 recipeId: $(e.target).attr("data-recipeId")
                             }
                         },
-                        success: function () {
-                            console.log("Sented :)");
+                        success: function (response) {
+                            if (response>0) {
+                                $(e.target).removeClass("text-white");
+                                $(e.target).addClass("text-teal");
+                              
+                            }
+                            if (response == -1) {
+                                $(e.target).removeClass("text-teal");
+                                $(e.target).addClass("text-white");
+
+                                $.ajax({
+                                    url: "http://localhost:53727/food/remove/" + $(e.target).attr("data-recipeId"),
+                                    dataType: 'json',
+                                    headers: { 'Access-Control-Allow-Origin': '*' },
+                                    crossDomain: true,
+                                    type: "delete",
+                                    success: function (data) {
+                                        console.log(data)
+                                    }
+                                    
+                                })
+                            }
                         }
                         
                     })
