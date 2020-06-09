@@ -17,7 +17,6 @@ namespace SpoonacularConcept.Models.ViewModels
         public string Password { get; set; }
         public int UserId { get; set; }
 
-
         public AuthStatus authStatus;
     }
 }

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@{
     ViewBag.Title = "Home Page";
 }
     <div class="content-header my-2 text-center">
@@ -16,27 +17,30 @@
                     <div></div><div></div><div></div>
                 </div>
             </div>
+        </div>
         
     </div>
 @section scripts
 {
     <script>
+        
 
-         function getTotalLikes() {
+
+        function getTotalLikes() {
             $.ajax({
                 type: "get",
                 url: "http://localhost:53727/food/GetLikeCount",
-                dataType: 'json',
                 headers: {  'Access-Control-Allow-Origin': '*' },
                 crossDomain: true,
                 success: function (data) {
                     
                     $("#likedCount").text(data); 
+                },
+                error: function () {
+                    console.log("GettingLikes is hard u know :(");
                 }
             });
         }
-      
-
         function loadContent() {
             $.ajax({
                 type: "GET",
@@ -55,8 +59,7 @@
                 }
             });
         }
-
-        function renderCardMarkup({ title, servings, readyInMinutes, pricePerServing, spoonacularScore, image,id }) {
+        function renderCardMarkup({ title, servings, readyInMinutes, pricePerServing, spoonacularScore, image, id, extendedIngredients }) {
             return `<div class="card card-medium m-2">
                     <div class="card-img-overlay p-2 d-flex justify-content-end">
                         <div class="d-flex flex-column">
@@ -92,17 +95,19 @@
                                 <span id="recipe-time" class="text-secondary">${readyInMinutes}</span>
                                 <span>min</span>    
                             </div>
+                                
                         </div>
                     </div>
+
+                    <span style="display:none" id="recipe-ingredients">${JSON.stringify(extendedIngredients)}</span >
                 </div>`
         }
+
+
         $(function () {
 
             getTotalLikes();
-
-            
-
-           
+              
             $("#cardSpace").on('click', "#markFavourite i,#addToCart i", (e) => {
 
                 var actionType = $(e.target).parent().attr('id');
@@ -127,27 +132,28 @@
                                 Score: cardSpace.find("#recipe-score").text(),
                                 Price: cardSpace.find("#recipe-price").text(),
                                 Time: cardSpace.find("#recipe-time").text(),
-                                recipeId: $(e.target).attr("data-recipeId")
+                                recipeId: $(e.target).attr("data-recipeId"),
+                                extendedIngredients: cardSpace.find("#recipe-ingredients").text()
                             }
                         },
                         success: function (response) {
+                           
                             if (response>0) {
                                 $(e.target).removeClass("text-white");
                                 $(e.target).addClass("text-teal");
-                              
+                                getTotalLikes();
                             }
                             if (response == -1) {
                                 $(e.target).removeClass("text-teal");
                                 $(e.target).addClass("text-white");
-
+                                
                                 $.ajax({
-                                    url: "http://localhost:53727/food/remove/" + $(e.target).attr("data-recipeId"),
-                                    dataType: 'json',
+                                    url: "http://localhost:53727/food/remove/" + $(e.target).attr("data-recipeId").toString(),
                                     headers: { 'Access-Control-Allow-Origin': '*' },
                                     crossDomain: true,
                                     type: "delete",
                                     success: function (data) {
-                                        console.log(data)
+                                        getTotalLikes();
                                     }
                                     
                                 })
@@ -155,6 +161,28 @@
                         }
                         
                     })
+                }
+                if (actionType == "addToCart") {
+                    var cardSpace = $(e.target).closest(".card");
+
+                    $.ajax({
+                        type: "post",
+                        dataType: "text",
+                        headers: { 'Access-Control-Allow-Origin': '*' },
+                        crossDomain: true,
+                        url: "http://localhost:53727/food/PurchaseIngredients",
+                        data: {
+                            'Recipe': {
+                                jsonExtendedIngredientsArray:cardSpace.find("#recipe-ingredients").text()
+                            }
+                        }
+
+                    })
+                        .then(response => {
+                                $(e.target).removeClass("text-white");
+                                $(e.target).addClass("text-teal");
+                        })
+                        .catch(err => console.log("Some error occured :("))
                 }
             });
 

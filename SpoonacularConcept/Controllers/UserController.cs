@@ -27,6 +27,12 @@ namespace SpoonacularConcept.Controllers
             Session.Abandon();
             return RedirectToAction("Login");
         }
+        [ChildActionOnly]
+        public ActionResult Navbar()
+        {
+            var userStatusModel = Session["userLogInStatus"];
+            return PartialView("_Navbar", userStatusModel);
+        }
         public ActionResult SignUp()
         {
             return View();

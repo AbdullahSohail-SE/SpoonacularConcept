@@ -118,6 +118,37 @@ namespace SpoonacularConcept.Models
             }
 
         }
+
+        public int PurchaseIngredients(List<Ingredient> ingredientsList,int userId)
+        {
+            using (var cmd = new SqlCommand("PurchaseIngredients", _sqlConn))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+
+
+
+                _sqlConn.Open();
+                foreach (var ingredient in ingredientsList)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add("@cartId", System.Data.SqlDbType.SmallInt).Direction = System.Data.ParameterDirection.Output;
+                    cmd.Parameters.Add("@UserId", System.Data.SqlDbType.TinyInt).Value = userId;
+                    cmd.Parameters.Add("@IngredientId", System.Data.SqlDbType.Int).Value = ingredient.IngredientId;
+                    cmd.Parameters.Add("@Name", System.Data.SqlDbType.VarChar).Value = ingredient.Name;
+                    cmd.Parameters.Add("@Image", System.Data.SqlDbType.VarChar).Value = ingredient.Image;
+                    cmd.Parameters.Add("@Unit", System.Data.SqlDbType.VarChar).Value = ingredient.Unit;
+                    cmd.Parameters.Add("@Amount", System.Data.SqlDbType.SmallInt).Value = ingredient.Amount;
+
+                    cmd.ExecuteNonQuery();
+                }
+                _sqlConn.Close();
+
+                return 0;
+
+            }
+
+        }
         
     }
 }

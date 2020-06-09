@@ -15,5 +15,7 @@ namespace SpoonacularConcept.Models.ViewModels
         public float Price { get; set; }
         public string Time { get; set; }
         public int recipeId { get; set; }
+
+        public string jsonExtendedIngredientsArray { get; set; }
     }
 }
