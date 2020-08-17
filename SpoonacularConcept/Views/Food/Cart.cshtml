@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header my-2 text-center">
+    <h3 class="font-weight-normal my-1 custom-heading">Order Now!</h3>
+</div>
+
+<div class="content d-flex ">
+    <div class="d-inline-block  mx-auto">
+        <div class="data-table-div">
+            <table id="ingredients-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Servings</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+@section scripts
+{
+    <script>
+        function getCartIngredients() {
+            $.ajax({
+                type: "get",
+                dataType:'json',
+                url: "http://localhost:53727/food/GetIngredientsCart",
+                headers: {  'Access-Control-Allow-Origin': '*' },
+                crossDomain: true,
+                success: function (data) {
+
+                    console.log(data);
+                },
+                error: function () {
+                    console.log("GettingLikes is hard u know :(");
+                }
+            });
+        }
+        $(function () {
+            getCartIngredients();
+            $("#ingredients-table")
+            
+        })
+    </script>    
+}

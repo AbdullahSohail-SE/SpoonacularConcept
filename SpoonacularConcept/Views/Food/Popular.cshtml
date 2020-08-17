@@ -67,7 +67,7 @@
                                 <i  data-recipeId=${id} class="fas my-1  fa-heart text-white"></i>
                             </button >
                             <button id="addToCart" class="btn custom-card-btn">
-                                <i  class="fas my-1  fa-cart-plus text-white"></i>
+                                <i data-recipeId=${id} class="fas my-1  fa-cart-plus text-white"></i>
                             </button>
                         </div>
                     </div>
@@ -102,11 +102,43 @@
                     <span style="display:none" id="recipe-ingredients">${JSON.stringify(extendedIngredients)}</span >
                 </div>`
         }
+        function getTotalCartIngredients() {
+            $.ajax({
+                type: "get",
+                url: "http://localhost:53727/food/GetPurchaseCount",
+                headers: {  'Access-Control-Allow-Origin': '*' },
+                crossDomain: true,
+                success: function (data) {
+                    
+                    $("#ingredientsCount").text(data); 
+                },
+                error: function () {
+                    console.log("GettingLikes is hard u know :(");
+                }
+            });
+        }
+        function getCartIngredients() {
+            $.ajax({
+                type: "get",
+                dataType:"json",
+                url: "http://localhost:53727/food/GetIngredientsCart",
+                headers: {  'Access-Control-Allow-Origin': '*' },
+                crossDomain: true,
+                success: function (data) {
 
+                    console.log(data);
+                },
+                error: function () {
+                    console.log("GettingLikes is hard u know :(");
+                }
+            });
+        }
 
         $(function () {
 
             getTotalLikes();
+            getTotalCartIngredients();
+            getCartIngredients();
               
             $("#cardSpace").on('click', "#markFavourite i,#addToCart i", (e) => {
 
@@ -173,14 +205,23 @@
                         url: "http://localhost:53727/food/PurchaseIngredients",
                         data: {
                             'Recipe': {
-                                jsonExtendedIngredientsArray:cardSpace.find("#recipe-ingredients").text()
+                                jsonExtendedIngredientsArray: cardSpace.find("#recipe-ingredients").text(),
+                                recipeId: $(e.target).attr("data-recipeId"),
+                                Image: cardSpace.find("#recipe-src").attr('src'),
+                                Summary: 'lorem ipsum summary dotem poasdmaklsndand aosdnjasn',
+                                Title: cardSpace.find("#recipe-title").text(),
+                                Servings: cardSpace.find("#recipe-servings").text(),
+                                Score: cardSpace.find("#recipe-score").text(),
+                                Price: cardSpace.find("#recipe-price").text(),
+                                Time: cardSpace.find("#recipe-time").text()
                             }
                         }
 
                     })
                         .then(response => {
                                 $(e.target).removeClass("text-white");
-                                $(e.target).addClass("text-teal");
+                            $(e.target).addClass("text-teal");
+                            getTotalCartIngredients();
                         })
                         .catch(err => console.log("Some error occured :("))
                 }
