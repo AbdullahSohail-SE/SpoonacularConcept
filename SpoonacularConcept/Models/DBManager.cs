@@ -60,22 +60,22 @@ namespace SpoonacularConcept.Models
                 return userId;
             }
         }
-        public int MarkFavourite(dynamic Info)
+        public int MarkFavourite(AddToLikeCart recipe,int userId)
         {
             using (var cmd=new SqlCommand("AddToCart", _sqlConn))
             {
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                
           
-                cmd.Parameters.Add("@RecipeId", System.Data.SqlDbType.Int).Value = Info.recipe.recipeId;
-                cmd.Parameters.Add("@UserId", System.Data.SqlDbType.TinyInt).Value = Info.userId;
-                cmd.Parameters.Add("@Image", System.Data.SqlDbType.NVarChar).Value = Info.recipe.Image;
-                cmd.Parameters.Add("@Summary", System.Data.SqlDbType.VarChar).Value = Info.recipe.Summary;
-                cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = Info.recipe.Title;
-                cmd.Parameters.Add("@Servings", System.Data.SqlDbType.SmallInt).Value = Info.recipe.Servings;
-                cmd.Parameters.Add("@Price", System.Data.SqlDbType.SmallInt).Value = Info.recipe.Price;
-                cmd.Parameters.Add("@Score", System.Data.SqlDbType.TinyInt).Value = Info.recipe.Score;
-                cmd.Parameters.Add("@Time", System.Data.SqlDbType.VarChar).Value = Info.recipe.Time;
+                cmd.Parameters.Add("@RecipeId", System.Data.SqlDbType.Int).Value = recipe.recipeId;
+                cmd.Parameters.Add("@UserId", System.Data.SqlDbType.TinyInt).Value = userId;
+                cmd.Parameters.Add("@Image", System.Data.SqlDbType.NVarChar).Value =recipe.Image;
+                cmd.Parameters.Add("@Summary", System.Data.SqlDbType.VarChar).Value = recipe.Summary;
+                cmd.Parameters.Add("@Title", System.Data.SqlDbType.VarChar).Value = recipe.Title;
+                cmd.Parameters.Add("@Servings", System.Data.SqlDbType.SmallInt).Value =recipe.Servings;
+                cmd.Parameters.Add("@Price", System.Data.SqlDbType.SmallInt).Value = recipe.Price;
+                cmd.Parameters.Add("@Score", System.Data.SqlDbType.TinyInt).Value = recipe.Score;
+                cmd.Parameters.Add("@Time", System.Data.SqlDbType.VarChar).Value = recipe.Time;
 
                 cmd.Parameters.Add("@cartId", System.Data.SqlDbType.SmallInt).Direction= System.Data.ParameterDirection.Output;
                 _sqlConn.Open();
@@ -119,16 +119,38 @@ namespace SpoonacularConcept.Models
 
         }
 
-        public int PurchaseIngredients(List<Ingredient> ingredientsList,int userId)
+        public int GetPurchaseCount(int userId)
         {
-            using (var cmd = new SqlCommand("PurchaseIngredients", _sqlConn))
+            using (var cmd = new SqlCommand("GetPurchaseCount", _sqlConn))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.Add("@userId", System.Data.SqlDbType.TinyInt).Value = userId;
+                cmd.Parameters.Add("@purchaseCount", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.Output;
+
+                _sqlConn.Open();
+                cmd.ExecuteNonQuery();
+                var purchaseCount = Convert.ToInt32(cmd.Parameters["@purchaseCount"].Value);
+                _sqlConn.Close();
+                return purchaseCount;
+            }
+
+        }
+
+        public int PurchaseIngredients(List<Ingredient> ingredientsList,int userId,AddToLikeCart recipe)
+        {
+            
+            MarkFavourite(recipe, userId);
+            
+
+                using (var cmd = new SqlCommand("PurchaseIngredients", _sqlConn))
             {
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
 
 
+                if (_sqlConn.State != System.Data.ConnectionState.Open)
+                    _sqlConn.Open();
 
-                _sqlConn.Open();
                 foreach (var ingredient in ingredientsList)
                 {
                     cmd.Parameters.Clear();
@@ -139,6 +161,7 @@ namespace SpoonacularConcept.Models
                     cmd.Parameters.Add("@Image", System.Data.SqlDbType.VarChar).Value = ingredient.Image;
                     cmd.Parameters.Add("@Unit", System.Data.SqlDbType.VarChar).Value = ingredient.Unit;
                     cmd.Parameters.Add("@Amount", System.Data.SqlDbType.SmallInt).Value = ingredient.Amount;
+                    cmd.Parameters.Add("@recipeId", System.Data.SqlDbType.Int).Value = recipe.recipeId;
 
                     cmd.ExecuteNonQuery();
                 }
@@ -149,6 +172,31 @@ namespace SpoonacularConcept.Models
             }
 
         }
-        
+
+        public List<object> GetCartIngredients(int userId)
+        {
+            var Ingredients = new List<object>();
+            using (var cmd = new SqlCommand("GetIngredientsCart", _sqlConn))
+            {
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.Add("UserId", System.Data.SqlDbType.Int).Value = userId;
+
+                _sqlConn.Open();
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        var Name = reader.GetString(0);
+                        var Servings = reader.GetInt16(1);
+                        var Quantity = reader.GetByte(2);
+
+                        Ingredients.Add(new { Name, Servings, Quantity });
+                    }
+                }
+                _sqlConn.Close();
+            }
+            return Ingredients;
+        }
     }
 }

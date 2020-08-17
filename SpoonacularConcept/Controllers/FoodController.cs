@@ -22,32 +22,28 @@ namespace SpoonacularConcept.Controllers
 
             return View();
         }
-       
 
-      /*  public ActionResult MarkFavourite(int recipeId)
-        {
 
-        }
-      */
-       [HttpPost]
+
+        [HttpPost]
         public ActionResult AddToCart(AddToLikeCart recipe)
         {
 
-            
+
 
             var userInfo = Session["userLogInStatus"] as LoginVIewModel;
             var userId = userInfo.UserId;
 
             var manager = new DBManager("SpoonacularDB");
-            var cartId=manager.MarkFavourite(new { userId, recipe });
+            var cartId = manager.MarkFavourite(recipe,userId);
 
             return Content(cartId.ToString());
         }
         [HttpPost]
         public ActionResult PurchaseIngredients(AddToLikeCart recipe)
         {
-            
-            
+
+
             var extendedIngredientsJarray = (JArray)JsonConvert.DeserializeObject(recipe.jsonExtendedIngredientsArray);
 
             var extendedIngredients = extendedIngredientsJarray.Select(x => new Ingredient()
@@ -64,8 +60,8 @@ namespace SpoonacularConcept.Controllers
             var userId = userInfo.UserId;
 
             var manager = new DBManager("SpoonacularDB");
-            manager.PurchaseIngredients(extendedIngredients, userId);
-            
+            manager.PurchaseIngredients(extendedIngredients, userId,recipe);
+
 
             return Content("asd");
         }
@@ -83,27 +79,46 @@ namespace SpoonacularConcept.Controllers
             return Content("Deleted");
 
         }
+        [HttpGet]
         public ActionResult GetLikeCount()
         {
             var manager = new DBManager("SpoonacularDB");
             var userInfo = Session["userLogInStatus"] as LoginVIewModel;
             var userId = userInfo.UserId;
 
-            var likesCount=manager.GetLikeCount(userId);
+            var likesCount = manager.GetLikeCount(userId);
             return Content(likesCount.ToString());
         }
-
-        public ActionResult About()
+        [HttpGet]
+        public ActionResult GetPurchaseCount()
         {
-            ViewBag.Message = "Your application description page.";
+            var manager = new DBManager("SpoonacularDB");
+            var userInfo = Session["userLogInStatus"] as LoginVIewModel;
+            var userId = userInfo.UserId;
 
+            var ingredientsCount = manager.GetPurchaseCount(userId);
+            return Content(ingredientsCount.ToString());
+        }
+
+        [HttpGet]
+        public ActionResult GetIngredientsCart()
+        {
+            var manager = new DBManager("SpoonacularDB");
+            var userInfo = Session["userLogInStatus"] as LoginVIewModel;
+            var userId = userInfo.UserId;
+            var result= manager.GetCartIngredients(userId);
+
+            return Content(JsonConvert.SerializeObject(result));
+            
+        }
+       public ActionResult Checkout()
+        {
             return View();
         }
 
-        public ActionResult Contact()
+        [Route("food/cart")]
+        public ActionResult Cart()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
     }
